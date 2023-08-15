@@ -14,8 +14,24 @@ const configServer = require("./config/configServer.js");
 const { errorHandler } = require("./middlewares/error.middleware.js");
 const { logger, addLogger } = require("./utils/logger.js");
 const ObjectId = mongoose.Types.ObjectId
+const swaggerJsDoc = require("swagger-jsdoc")
+const swaggerUiExpress = require("swagger-ui-express")
 const PORT = process.env.PORT;
 const app = express()
+
+const swaggerOptions = {
+    definition: {
+        openapi: '3.0.1',
+        info: {
+            title: 'Documentación de modulos Carts y Products',
+            description: 'Esta es la documentación del crud de los modulos anteriormente mencionados'
+        }
+    },
+    apis: [`${__dirname}/docs/**/*.yaml`]
+}
+
+const specs = swaggerJsDoc(swaggerOptions)
+app.use('/docs', swaggerUiExpress.serve, swaggerUiExpress.setup(specs))
 
 const httpServer = app.listen(PORT, () => {
 	logger.info(`Escuchando en el puerto ${PORT}`);
